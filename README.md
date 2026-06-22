@@ -73,6 +73,7 @@ The basic steps are:
 ```
 # Download installation script.
 wget "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
+
 # Run installation script, providing responses when prompted,
 # including specifying the installation location.
 bash Miniforge3-$(uname)-$(uname -m).sh
