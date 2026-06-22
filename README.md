@@ -2,11 +2,11 @@
 
 ## 1. Introduction
 
-This is guidance on using the [Miniforge](https://github.com/conda-forge/miniforge) installers to install [conda](https://docs.conda.io/en/latest/) package
+This is guidance on using the [Miniforge](https://github.com/conda-forge/miniforge) installers to install the [conda](https://docs.conda.io/en/latest/) package
 manager on the [Dawn supercomputer](https://www.hpc.cam.ac.uk/d-w-n).  Dawn is
 hosted at the University of Cambridge, and is part
-of the [AI Resource Research (AIRR)](https://www.gov.uk/government/publications/ai-research-resource/airr-advanced-supercomputers-for-the-uk).  It was
-installed with 256 nodes, in the form of [Dell PowerEdge XE9640](https://www.delltechnologies.com/asset/en-us/products/servers/technical-support/poweredge-xe9640-spec-sheet.pdf) servers.  Each node consists of: 2 CPUs ([Intel Xeon Platinum 8468](https://www.intel.com/content/www/us/en/products/sku/231735/intel-xeon-platinum-8468-processor-105m-cache-2-10-ghz/specifications.html)), each with 48 cores and 512 GiB RAM; 4 GPUs ([Intel Data Centre GPU Max 1550](https://www.intel.com/content/www/us/en/products/sku/232873/intel-data-center-gpu-max-1550/specifications.html)),
+of the [AI Resource Research (AIRR)](https://www.gov.uk/government/publications/ai-research-resource/airr-advanced-supercomputers-for-the-uk).  It was initially
+installed with 256 nodes, in the form of [Dell PowerEdge XE9640](https://www.delltechnologies.com/asset/en-us/products/servers/technical-support/poweredge-xe9640-spec-sheet.pdf) servers.  Each node consisted of: 2 CPUs ([Intel Xeon Platinum 8468](https://www.intel.com/content/www/us/en/products/sku/231735/intel-xeon-platinum-8468-processor-105m-cache-2-10-ghz/specifications.html)), each with 48 cores and 512 GiB RAM; 4 GPUs ([Intel Data Centre GPU Max 1550](https://www.intel.com/content/www/us/en/products/sku/232873/intel-data-center-gpu-max-1550/specifications.html)),
 each with two stacks (or tiles), 1024 compute units, and 128 GiB RAM.
 
 The material collected here is licensed under the
@@ -15,58 +15,60 @@ The material collected here is licensed under the
 ## 2. Where to install
 
 To avoid taking up space in your home directory, it's suggested that
-conda be installed in an [area of the Research Data Store](https://docs.hpc.cam.ac.uk/hpc/user-guide/io_management.html).  The `rds` subdirectory of
-your home directory contains links to the directories on the Research Data
-Store to which you have access.  On a Dawn login node or compute node, you
-can list these links, and the absolute paths to which they correspond,
-with:
+you install `conda`in an [area of the Research Data Store](https://docs.hpc.cam.ac.uk/hpc/user-guide/io_management.html).  Links to the directories of
+the Research Data store to which you have access can be found in your
+home directory.  On a Dawn login node or compute node, you
+can list these links, and the absolute paths to which they correspond:
 ```
 ls -l ~/rds
 ``` 
 It can be useful to link the path of the `conda` installation to a path in
 your home directory.  For example, to link a `conda` installation at
-`~/rds/path/to/conda` to the default `Miniforge` installation path, use:
+`~/rds/project_folder/my_conda` to the default `Miniforge` installation path,
+use:
 ```
-ln -s ~/rds/path/to/conda ~/miniforge3
+ln -s ~/rds/project_folder/my_conda ~/miniforge3
 ```
 
 ## 3. Installation
 
 Before installing, you should check that you agree with the
-[Conda license](https://docs.conda.io/en/latest/license.html) and with
-the [Miniforge license](https://github.com/conda-forge/miniforge?tab=License-1-ov-file).  Installation may be performed via a Slurm job or from the command
-line.
+[Conda license](https://docs.conda.io/en/latest/license.html), and with
+the [Miniforge license](https://github.com/conda-forge/miniforge?tab=License-1-ov-file).  Installation may be performed
+[via a Slurm job](#31-installation-via-a-slurm-job) or
+[from the command line](#32-installation-from-the-command-line).
 
 ### 3.1 Installation via a Slurm job
 
 On a Dawn login node or compute node, download the installation script
 [miniforge3_install.sh](miniforge3_install.sh):
 ```
-wget https://raw.githubusercontent.com/kh296/dawn-conda/refs/heads/main/scripts/miniforge3_install.sh
+wget https://raw.githubusercontent.com/kh296/dawn-conda/refs/heads/main/miniforge3_install.sh
 ```
 
 Submit a Slurm job to run the script:
 ```
 # Substitute for <project_account> a valid project account.
 # Substitute for <install path> the path to the directory for installation.
-# Substitute for <link path> a path, e.g. ~/miniforge3, to link to
-# <install path>; or omit -l option so as not to create a link.
+# Substitute for <link path> a path to link to <install path>;
+# or omit -l option to avoid creating a link.
 sbatch --account=<project account> ./miniforge3_install.sh -i <install path> -l <link path>
 ```
 **Warning**: Running the script will delete any pre-existing files at
-`<install path>` and `<link path>`.  Be sure to give the paths that you
+`<install path>` and `<link path>`.  Be sure to use the paths that you
 intend.
 
-Once started, the script should take about three minutes to complete.  The
-job output will be written to `miniforge3_install.log`.  If the
-installation was successful, that last line gives the command to set up
-the `Miniforge` environment for using `conda`.
+Once it starts running, the script should take about three minutes to
+complete.  The job output will be written to `miniforge3_install.log`.  If the
+installation was successful, the last line of the output indicates the
+command to set up the `Miniforge` environment for using `conda`.
 
 ### 3.2 Installation from the command line
 
 On a Dawn compute node, installation may be performed by following
 the instructions at:
 - [https://github.com/conda-forge/miniforge#unix-like-platforms-macos-linux--wsl](https://github.com/conda-forge/miniforge#unix-like-platforms-macos-linux--wsl)
+
 The basic steps are:
 ```
 # Download installation script.
@@ -84,16 +86,18 @@ installation directory must be done separately:
 ln -s <install path> <link path>
 ```
 
-As an alternative, it's also possible to run from the command line the
-script for installation via a Slurm job.  In this case, the commands are:
+As an alternative to the above, it's also possible to run from the
+command line the script for
+[installation via a Slurm job](#31-installation-via-a-slurm-job).  In this case,
+the commands are:
 ```
 # Download installation script.
-wget https://raw.githubusercontent.com/kh296/dawn-conda/refs/heads/main/scripts/miniforge3_install.sh
+wget https://raw.githubusercontent.com/kh296/dawn-conda/refs/heads/main/miniforge3_install.sh
 
 # Run installation script:
 # substitute for <install path> the path to the directory for installation;
 # substitute for <link path> a path to link to <install path>;
-# or omit -l option so as not to create a link.
+# or omit -l option to avoid creating a link.
 bash miniforge3_install.sh -i <install path> -l <link path>
 ```
 Again, instructions on subsequently setting up the `Miniforge` environment for
