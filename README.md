@@ -1,93 +1,100 @@
-# dawn-conda
+# Installing conda on Dawn
 
+## 1. Introduction
 
+This is guidance on using the [Miniforge](https://github.com/conda-forge/miniforge) installers to install [conda](https://docs.conda.io/en/latest/) package
+manager on the [Dawn supercomputer](https://www.hpc.cam.ac.uk/d-w-n).  Dawn is
+hosted at the University of Cambridge, and is part
+of the [AI Resource Research (AIRR)](https://www.gov.uk/government/publications/ai-research-resource/airr-advanced-supercomputers-for-the-uk).  It was
+installed with 256 nodes, in the form of [Dell PowerEdge XE9640](https://www.delltechnologies.com/asset/en-us/products/servers/technical-support/poweredge-xe9640-spec-sheet.pdf) servers.  Each node consists of: 2 CPUs ([Intel Xeon Platinum 8468](https://www.intel.com/content/www/us/en/products/sku/231735/intel-xeon-platinum-8468-processor-105m-cache-2-10-ghz/specifications.html)), each with 48 cores and 512 GiB RAM; 4 GPUs ([Intel Data Centre GPU Max 1550](https://www.intel.com/content/www/us/en/products/sku/232873/intel-data-center-gpu-max-1550/specifications.html)),
+each with two stacks (or tiles), 1024 compute units, and 128 GiB RAM.
 
-## Getting started
+The material collected here is licensed under the
+[Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0).
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+## 2. Where to install
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-* [Create](https://docs.gitlab.com/user/project/repository/web_editor/#create-a-file) or [upload](https://docs.gitlab.com/user/project/repository/web_editor/#upload-a-file) files
-* [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
-
+To avoid taking up space in your home directory, it's suggested that
+conda be installed in an [area of the Research Data Store](https://docs.hpc.cam.ac.uk/hpc/user-guide/io_management.html).  The `rds` subdirectory of
+your home directory contains links to the directories on the Research Data
+Store to which you have access.  On a Dawn login node or compute node, you
+can list these links, and the absolute paths to which they correspond,
+with:
 ```
-cd existing_repo
-git remote add origin https://gitlab.developers.cam.ac.uk/kh296/dawn-conda.git
-git branch -M main
-git push -uf origin main
+ls -l ~/rds
+``` 
+It can be useful to link the path of the `conda` installation to a path in
+your home directory.  For example, to link a `conda` installation at
+`~/rds/path/to/conda` to the default `Miniforge` installation path, use:
+```
+ln -s ~/rds/path/to/conda ~/miniforge3
 ```
 
-## Integrate with your tools
+## 3. Installation
 
-* [Set up project integrations](https://gitlab.developers.cam.ac.uk/kh296/dawn-conda/-/settings/integrations)
+Before installing, you should check that you agree with the
+[Conda license](https://docs.conda.io/en/latest/license.html) and with
+the [Miniforge license](https://github.com/conda-forge/miniforge?tab=License-1-ov-file).  Installation may be performed via a Slurm job or from the command
+line.
 
-## Collaborate with your team
+### 3.1 Installation via a Slurm job
 
-* [Invite team members and collaborators](https://docs.gitlab.com/user/project/members/)
-* [Create a new merge request](https://docs.gitlab.com/user/project/merge_requests/creating_merge_requests/)
-* [Automatically close issues from merge requests](https://docs.gitlab.com/user/project/issues/managing_issues/#closing-issues-automatically)
-* [Enable merge request approvals](https://docs.gitlab.com/user/project/merge_requests/approvals/)
-* [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+On a Dawn login node or compute node, download the installation script
+[miniforge3_install.sh](miniforge3_install.sh):
+```
+wget https://raw.githubusercontent.com/kh296/dawn-conda/refs/heads/main/scripts/miniforge3_install.sh
+```
 
-## Test and Deploy
+Submit a Slurm job to run the script:
+```
+# Substitute for <project_account> a valid project account.
+# Substitute for <install path> the path to the directory for installation.
+# Substitute for <link path> a path, e.g. ~/miniforge3, to link to
+# <install path>; or omit -l option so as not to create a link.
+sbatch --account=<project account> ./miniforge3_install.sh -i <install path> -l <link path>
+```
+**Warning**: Running the script will delete any pre-existing files at
+`<install path>` and `<link path>`.  Be sure to give the paths that you
+intend.
 
-Use the built-in continuous integration in GitLab.
+Once started, the script should take about three minutes to complete.  The
+job output will be written to `miniforge3_install.log`.  If the
+installation was successful, that last line gives the command to set up
+the `Miniforge` environment for using `conda`.
 
-* [Get started with GitLab CI/CD](https://docs.gitlab.com/ci/quick_start/)
-* [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/user/application_security/sast/)
-* [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/topics/autodevops/requirements/)
-* [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/user/clusters/agent/)
-* [Set up protected environments](https://docs.gitlab.com/ci/environments/protected_environments/)
+### 3.2 Installation from the command line
 
-***
+On a Dawn compute node, installation may be performed by following
+the instructions at:
+- [https://github.com/conda-forge/miniforge#unix-like-platforms-macos-linux--wsl](https://github.com/conda-forge/miniforge#unix-like-platforms-macos-linux--wsl)
+The basic steps are:
+```
+# Download installation script.
+wget "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
+# Run installation script, providing responses when prompted,
+# including specifying the installation location.
+bash Miniforge3-$(uname)-$(uname -m).sh
+```
+Instructions on subsequently setting up the `Miniforge` environment for
+using `conda` are included in the script output.  Any linking of the
+installation directory must be done separately:
+```
+# Substitute for <install path> the path to the installation directory.
+# Substitute for <link path> a path to link to <install path>.
+ln -s <install path> <link path>
+```
 
-# Editing this README
+As an alternative, it's also possible to run from the command line the
+script for installation via a Slurm job.  In this case, the commands are:
+```
+# Download installation script.
+wget https://raw.githubusercontent.com/kh296/dawn-conda/refs/heads/main/scripts/miniforge3_install.sh
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+# Run installation script:
+# substitute for <install path> the path to the directory for installation;
+# substitute for <link path> a path to link to <install path>;
+# or omit -l option so as not to create a link.
+bash miniforge3_install.sh -i <install path> -l <link path>
+```
+Again, instructions on subsequently setting up the `Miniforge` environment for
+using `conda` are included in the script output.
