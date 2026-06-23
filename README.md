@@ -15,10 +15,14 @@ The material collected here is licensed under the
 ## 2. Where to install
 
 To avoid taking up space in your home directory, it's suggested that
-you install `conda`in an [area of the Research Data Store](https://docs.hpc.cam.ac.uk/hpc/user-guide/io_management.html).  Links to the directories of
-the Research Data store to which you have access can be found in your
-home directory.  On a Dawn login node or compute node, you
-can list these links, and the absolute paths to which they correspond:
+you install `conda` to a 
+[filesystem](https://docs.hpc.cam.ac.uk/hpc/user-guide/io_management.html)
+directory in the
+[Reseach Data Store](https://www.hpc.cam.ac.uk/research-data-store).  Links
+to the directories of the Research Data store to which you have access can be
+found in the `rds` subdirectory of your home directory.  You can list these
+links, and the absolute paths to which they correspond, on a Dawn login
+node or compute node:
 ```
 ls -l ~/rds
 ``` 
@@ -32,9 +36,10 @@ ln -s ~/rds/project_folder/my_conda ~/miniforge3
 
 ## 3. Installation
 
-Before installing, you should check that you agree with the
+Before installing, you should check that you agree with the conditions of the
 [Conda license](https://docs.conda.io/en/latest/license.html), and with
-the [Miniforge license](https://github.com/conda-forge/miniforge?tab=License-1-ov-file).  Installation may be performed
+the conditions of the
+[Miniforge license](https://github.com/conda-forge/miniforge?tab=License-1-ov-file).  Installation may be performed
 [via a Slurm job](#31-installation-via-a-slurm-job) or
 [from the command line](#32-installation-from-the-command-line).
 
@@ -54,9 +59,9 @@ Submit a Slurm job to run the script:
 # or omit -l option to avoid creating a link.
 sbatch --account=<project account> ./miniforge3_install.sh -i <install path> -l <link path>
 ```
-**Warning**: Running the script will delete any pre-existing files at
-`<install path>` and `<link path>`.  Be sure to use the paths that you
-intend.
+**Warning**: Running the installation script will delete any pre-existing
+files at `<install path>` and `<link path>`.  Be sure to use the paths that
+you intend.
 
 Once it starts running, the script should take about three minutes to
 complete.  The job output will be written to `miniforge3_install.log`.  If the
@@ -94,7 +99,8 @@ the commands are:
 ```
 # Download installation script.
 wget https://raw.githubusercontent.com/kh296/dawn-conda/refs/heads/main/miniforge3_install.sh
-
+```
+```
 # Run installation script:
 # substitute for <install path> the path to the directory for installation;
 # substitute for <link path> a path to link to <install path>;
