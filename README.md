@@ -59,12 +59,12 @@ Submit a Slurm job to run the script:
 # or omit -l option to avoid creating a link.
 sbatch --account=<project account> ./miniforge3_install.sh -i <install path> -l <link path>
 ```
-**Warning**: Running the installation script will delete any pre-existing
+**Warning**: Running the installation script deletes any pre-existing
 files at `<install path>` and `<link path>`.  Be sure to use the paths that
 you intend.
 
 Once it starts running, the script should take about three minutes to
-complete.  The job output will be written to `miniforge3_install.log`.  If the
+complete.  The job output is written to `miniforge3_install.log`.  If the
 installation was successful, the last line of the output indicates the
 command to set up the `Miniforge` environment for using `conda`.
 
