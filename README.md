@@ -63,7 +63,7 @@ sbatch --account=<project account> ./miniforge3_install.sh -i <install path> -l 
 files at `<install path>` and `<link path>`.  Be sure to use the paths that
 you intend.
 
-Once it starts running, the script should take about three minutes to
+Once it starts running, the script should take about five minutes to
 complete.  The job output is written to `miniforge3_install.log`.  If the
 installation was successful, the last line of the output indicates the
 command to set up the `Miniforge` environment for using `conda`.
