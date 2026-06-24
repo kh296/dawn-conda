@@ -2,8 +2,7 @@
 
 Conda can be installed on the
 [AMD Accelerator Cluster (AAC)](https://aac.amd.com/help/) by following
-the guidance for installation on Dawn
-([dawn-conda/README.md](../README.md)),
+the guidance for [Installing conda on Dawn](../README.md),
 except that for installation via a Slurm job the submission command needs
 to be different.  In particular, it's usually not necessary
 to specify the account, but it is necessary to specify the partition,
